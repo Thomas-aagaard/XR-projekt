@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-animation-timeline-component@2.0.0/dist/aframe-animation-timeline-component.min.js"></script>
+  <script src="play-annimation.js"></script>
+  <script>
+    AFRAME.registerComponent('modify-materials', {
+      init: function () {
+        // Wait for model to load.
+        this.el.addEventListener('model-loaded', () => {
+          // Grab the mesh / scene.
+          const obj = this.el.getObject3D('mesh');
+          // Go over the submeshes and modify materials we want.
+          obj.traverse(node => {
+            if (node.name.indexOf('ship') !== -1) {
+              node.material.color.set('red');
+            }
+          });
+        });
+      }
+    });
+    AFRAME.registerComponent("enter-vr", {
+      init: function() {
+        document.querySelector('a-scene').addEventListener('enter-vr', function () {
+          console.log("ENTERED VR");
+          const el = document.querySelector("#cursor");
+          el.setAttribute("visible", false);
+        });
+      }
+    });
+
+    AFRAME.registerComponent('sphere-on-click',{
+      init: function() {
+        const view = document.getElementById("scene");
+        this.el.addEventListener('click', function() {
+          console.log("clicked!", "startAnimation");
+          view.emit("startAnimation");
+        });
+      }
+    });
+
+
+  </script>
+</head>
+<body>
+<a-scene id="scene" background="color: #ECECEC" enter-vr
+         animation-timeline__1="timeline: #myTimeline; loop:false; startEvents: startAnimation">
+  <a-assets>
+    <a-asset-item id="cityModel" src="https://cdn.aframe.io/test-models/models/glTF-2.0/virtualcity/VC.gltf"></a-asset-item>
+
+      <a-timeline id="myTimeline">
+        <a-timeline-group>
+          <a-timeline-animation select="#rig" name="1rotate"></a-timeline-animation>
+          <a-timeline-animation select="#rig" name="1move"></a-timeline-animation>
+        </a-timeline-group>
+        <a-timeline-group>
+          <a-timeline-animation select="#rig" name="2rotate"></a-timeline-animation>
+          <a-timeline-animation select="#rig" name="2move"></a-timeline-animation>
+
+        </a-timeline-group>
+        <a-timeline-group>
+          <a-timeline-animation select="#rig" name="3rotate"></a-timeline-animation>
+          <a-timeline-animation select="#rig" name="3move"></a-timeline-animation>
+        </a-timeline-group>
+      </a-timeline>
+    </a-assets>
+
+    <a-entity id="text_welcome" scale="2 2 1" rotation="0 0 0" position="25.5 2.800 -3" text="value: Click the sun!;"></a-entity>
+
+  <a-sphere id="sphere" scale="10 10 10" position="0.04869 30.70203 -32.54918" radius="1.25" color="yellow"
+            material="" geometry="" sphere-on-click></a-sphere>
+
+
+
+
+  <a-entity gltf-model="#cityModel" play-all-model-animations modify-materials></a-entity>
+
+
+  <a-entity id="rig" position="25 1.6 0" rotation="0 0 0"
+            animation__1rotate="property: rotation; from: 0  0; to: 0  90; dur: 3000; easing: linear; autoplay: false"
+            animation__2rotate="property: rotation; from: 0 90; to: 0   0; dur: 2000; easing: linear; autoplay: false"
+            animation__1move="property: position; from: 25 1.6 0; to: 1 1.6  0; dur: 10000; easing: easeInExpo; autoplay: false"
+            animation__2move="property: position; from:  1 1.6 0; to: 1 1.6 -20; dur: 10000; easing: linear; autoplay: false"
+            amimation__3rotate="property: position; from: 1 1.6 -20; to 1 1.6 90; dur: 2000; easing: linear; autoplay: false"
+            amimation__3move="property: position; from: 1 1.6 90; to 1 1.6 30; dur: 5000; easing: linear; autoplay: false" >
+
+    <a-entity id="player" position="0 1.400 -1" camera look-controls wasd-controls>
+      <a-entity id="cursor" cursor="fuse: false;"
+                position="-0.530 0 -2.104"
+                geometry="primitive: ring; radiusInner: 0.05; radiusOuter: 0.06"
+                material="color: white; shader: flat">
+      </a-entity>
+
+    </a-entity>
+    <a-box src="https://i.imgur.com/mYmmbrp.jpg" id="platform" scale="4 0.2 4" position="-0.1 1.190 -1.0" rotation="0 0 0" geometry="depth:  0.100;  height:  0.2;  width:  0.100"
+           material="color: red" geometry=""></a-box>
+    <a-box position="1 10.00 5" animation="property: position; to:-1.8  0 -2.0; dur: 2000; easing: linear; loop: true" geometry="depth:  0.100;  height:  0.2;  width:  0.100" color="tomato"></a-box>
+    <a-entity laser-controls="hand: right"></a-entity>
+  </a-entity>
+</a-scene>
+</body>
+</html>

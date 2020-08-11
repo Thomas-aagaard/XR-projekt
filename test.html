@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="play-annimation.js"></script>
+    <script>
+        AFRAME.registerComponent('modify-materials', {
+            init: function () {
+                // Wait for model to load.
+                this.el.addEventListener('model-loaded', () => {
+                    // Grab the mesh / scene.
+                    const obj = this.el.getObject3D('mesh');
+                    // Go over the submeshes and modify materials we want.
+                    obj.traverse(node => {
+                        if (node.name.indexOf('ship') !== -1) {
+                            node.material.color.set('red');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+<a-scene background="color: #ECECEC" src="#cityVedeo" >
+    <a-assets>
+        <a-asset-item id="cityModel" src="scene.gltf"></a-asset-item>
+        <video id="cityVideo" src="https://cdn.aframe.io/360-video-boilerplate/video/city.mp4"/>
+
+
+    </a-assets>
+
+    <!-- <a-entity camera look-controls position="-2.640 1.601 -0.652"></a-entity>-->
+    <a-entity gltf-model="#cityModel" play-all-model-animations modify-materials></a-entity>
+    <a-videopshere src="#cityVideo"></a-videopshere>
+</a-scene>
+</body>
+</html>
